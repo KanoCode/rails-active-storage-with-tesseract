@@ -1,25 +1,26 @@
 import { AppContext } from "../App";
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 
 function LatestImage() {
   const { latestPost, setLatestPost } = useContext(AppContext);
 
-  function handleSubmit(event){
-
-  }
-
-  function submitToAPI(data){
-    
-  }
-  return (<div>
-    <h1>
-
-    LatestImage
-
-    </h1>
+  useEffect(() => {
+    fetch("http://localhost:3000/latest")
+      .then((response) => response.json())
+      .then((data) => {
+        setLatestPost(data.image_url);
+      })
+      .catch((error) => console.error(error));
+  }, [latestPost]); //it will change every time the image is changed
 
 
-  </div>);
+  return (
+    <div>
+      <img src={latestPost} alt="latest post" className="latest-image" />
+
+
+    </div>
+  );
 }
 
 export default LatestImage;

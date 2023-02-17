@@ -8,14 +8,26 @@ class PostsController < ApplicationController
     render json: @posts
   end
 
+  def recent_posts
+    @posts = Post.last(3)
+    postsArray = []
+    @posts.each do |post|
+        postsArray << PostSerializer.new(post).serializable_hash[:data][:attributes]
+        
+    end
+
+    render json: postsArray
+  
+  end
+
   # GET /posts/1
   def show
     render json: @post
   end
 
   def latest
-    @post = Post.last 
-    render json: @post
+    @post = Post.last
+    render json: PostSerializer.new(@post).serializable_hash[:data][:attributes]
   end
 
   # POST /posts
@@ -51,6 +63,6 @@ class PostsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def post_params
-      params.require(:post).permit(:title,:image))
+      params.require(:post).permit(:title ,:image) # we permit the image parameter
     end
 end
