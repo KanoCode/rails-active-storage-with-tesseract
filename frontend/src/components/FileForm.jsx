@@ -7,10 +7,9 @@ function FileForm() {
   function handleSubmit(event) {
     event.preventDefault();
     const data = new FormData(); // because we are not sending raw json we are sending a form data object
-
     data.append("post[title]", event.target.title.value);
     data.append("post[image]", event.target.image.files[0]);
-    console.log(data);
+
     submitToAPI(data);
   }
   function submitToAPI(data) {
@@ -21,6 +20,7 @@ function FileForm() {
       .then((response) => response.json())
       .then((data) => {
         setLatestPost(data.image_url);
+        console.log(data.image_url);
       })
       .catch((error) => console.error(error));
   }
@@ -33,7 +33,7 @@ function FileForm() {
         <br />
 
         <label htmlFor="image">Image</label>
-        <input type="file" name="image" id="image" />
+        <input type="file" multiple name="images" id="image" />
         <br />
 
         <button type="submit">Create Post</button>

@@ -22,20 +22,33 @@ class PostsController < ApplicationController
 
   # GET /posts/1
   def show
-    render json: @post
+    post = Post.find(params[:id])
+    file = post.image_url
+    processed = ImageProcessing::MiniMagick
+  .source(file)
+  .convert("png")
+  .call
+    image = RTesseract.new(processed.path)
+    response =  image.to_s # Getting the value
+    post.img_text = response 
+
+    render json: PostSerializer.new(post).serializable_hash[:data][:attributes]
   end
 
   def latest
-    @post = Post.last
-    render json: PostSerializer.new(@post).serializable_hash[:data][:attributes]
+    post = Post.last
+    render json: PostSerializer.new(post).serializable_hash[:data][:attributes]
   end
 
   # POST /posts
   def create
     @post = Post.new(post_params)
-
     if @post.save
-      render json: @post, status: :created, location: @post
+      #  path = url_for(@post.image)
+
+      # image = RTesseract.new(path)
+      #  text  = image.to_s
+     render json:PostSerializer.new(@post).serializable_hash[:data][:attributes]
     else
       render json: @post.errors, status: :unprocessable_entity
     end

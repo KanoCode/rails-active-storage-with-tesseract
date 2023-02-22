@@ -9,16 +9,14 @@ function LatestImage() {
       .then((response) => response.json())
       .then((data) => {
         setLatestPost(data.image_url);
+        // console.log(data.image_urls);
       })
       .catch((error) => console.error(error));
   }, [latestPost]); //it will change every time the image is changed
 
-
   return (
     <div>
       <img src={latestPost} alt="latest post" className="latest-image" />
-
-
     </div>
   );
 }
