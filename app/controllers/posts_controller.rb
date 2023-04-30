@@ -20,19 +20,28 @@ class PostsController < ApplicationController
   
   end
 
+  # /users/1/relationships/documents
+  
+
   # GET /posts/1
   def show
     post = Post.find(params[:id])
-    file = post.image_url
-    processed = ImageProcessing::MiniMagick
-  .source(file)
-  .convert("png")
-  .call
-    image = RTesseract.new(processed.path)
-    response =  image.to_s # Getting the value
-    post.img_text = response 
+    file = post.image_urls
 
-    render json: PostSerializer.new(post).serializable_hash[:data][:attributes]
+    arr = []
+
+    file.each do |url|
+     processed = ImageProcessing::MiniMagick
+    .source(url)
+    .convert("png")
+    .call
+      image = RTesseract.new(processed.path)
+      response =  image.to_s # Getting the value
+      arr << response   
+    end
+    
+    # post.img_text = response 
+    render json: {post:PostSerializer.new(post).serializable_hash[:data][:attributes], tex: arr}
   end
 
   def latest
@@ -76,6 +85,6 @@ class PostsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def post_params
-      params.require(:post).permit(:title ,:image) # we permit the image parameter
+      params.require(:post).permit(:title ,images: []) # we permit the image parameter
     end
 end

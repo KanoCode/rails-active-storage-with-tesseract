@@ -8,7 +8,7 @@ function LatestImage() {
     fetch("http://localhost:3000/latest")
       .then((response) => response.json())
       .then((data) => {
-        setLatestPost(data.image_url);
+        setLatestPost(data.image_urls[0]);
         // console.log(data.image_urls);
       })
       .catch((error) => console.error(error));
